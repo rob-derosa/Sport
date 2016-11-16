@@ -8,7 +8,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using HockeyApp.iOS;
 using Sport.Mobile.Shared;
-using Microsoft.Azure.Mobile;
+//using Microsoft.Azure.Mobile;
 
 namespace Sport.Mobile.iOS
 {
@@ -33,8 +33,8 @@ namespace Sport.Mobile.iOS
 			ImageCircleRenderer.Init();
 			XFGloss.iOS.Library.Init();
 
-			if(!string.IsNullOrEmpty(Keys.MobileCenterKeyiOS))
-				MobileCenter.Initialize(Keys.MobileCenterKeyiOS);
+			//if(!string.IsNullOrEmpty(Keys.MobileCenterKeyiOS))
+			//	MobileCenter.Initialize(Keys.MobileCenterKeyiOS);
 	
 			LoadApplication(new App());
 

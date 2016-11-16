@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Microsoft.Azure.Mobile;
-using Microsoft.Azure.Mobile.Analytics;
-using Microsoft.Azure.Mobile.Crashes;
+//using Microsoft.Azure.Mobile;
+//using Microsoft.Azure.Mobile.Analytics;
+//using Microsoft.Azure.Mobile.Crashes;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json;
 using Xamarin.Forms;
@@ -80,7 +80,7 @@ namespace Sport.Mobile.Shared
 		{
 			_instance = this;
 
-			MobileCenter.Start(typeof(Analytics), typeof(Crashes));
+			//MobileCenter.Start(typeof(Analytics), typeof(Crashes));
 
 			SetDefaultPropertyValues();
 			InitializeComponent();
