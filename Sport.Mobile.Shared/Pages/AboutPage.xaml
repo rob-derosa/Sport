@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:AboutPageXaml xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:xfg="clr-namespace:XFGloss;assembly=XFGloss"
+	x:Class="Sport.Mobile.Shared.AboutPage"
+	xmlns:local="clr-namespace:Sport.Mobile.Shared">
+
+	<xfg:ContentPageGloss.BackgroundGradient>
+        <xfg:Gradient Rotation="170">
+           <xfg:GradientStep StepColor="#9DCC5F" StepPercentage="0" />
+           <xfg:GradientStep StepColor="#00B0CD" StepPercentage="1" />
+      </xfg:Gradient>
+    </xfg:ContentPageGloss.BackgroundGradient>
+	
+	<local:AboutPageXaml.Content>
+		<ScrollView AutomationId="scrollView">
+			<Grid VerticalOptions="Fill" AutomationId="aboutPage">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+				<StackLayout Spacing="30" Padding="20,20,20,0" VerticalOptions="Center">
+					<StackLayout Spacing="6" VerticalOptions="Center">
+						<Label Text="Sport" FontSize="32" FontAttributes="Bold" TextColor="White"
+							XAlign="Center" HorizontalOptions="Center" />
+
+						<Label x:Name="versionLabel" FontSize="Small" XAlign="Center" HorizontalOptions="Center"
+							 TextColor="White" />
+
+						<Label Text="built with Xamarin love in SF" FontSize="Medium" XAlign="Center" HorizontalOptions="Center"
+							 TextColor="White" />
+					</StackLayout>
+
+					<StackLayout>
+						<Image Source="logos" HorizontalOptions="Center" HeightRequest="100" />
+					</StackLayout>
+
+					<StackLayout>
+						<Label Text="Sport features the following platforms/frameworks:" FontSize="Small" XAlign="Center" HorizontalOptions="Center"
+							TextColor="White"/>
+						<Label HorizontalOptions="Center" FontSize="11" TextColor="White">
+							<Label.FormattedText>
+								<FormattedString>
+								    <FormattedString.Spans>
+								        <Span Text="&#x2022; Xamarin.iOS&#10;" />
+								        <Span Text="&#x2022; Xamarin.Android&#10;" />
+								        <Span Text="&#x2022; Xamarin.Forms&#10;" />
+								        <Span Text="    &#x2022; XAML&#10;" />
+								        <Span Text="    &#x2022; Bindings&#10;" />
+								        <Span Text="    &#x2022; Converters&#10;" />
+								        <Span Text="    &#x2022; Animations&#10;" />
+				                        <Span Text="    &#x2022; Styles&#10;" />
+				                        <Span Text="    &#x2022; Dependency Service&#10;" />
+								        <Span Text="    &#x2022; Messaging Center&#10;" />
+								        <Span Text="    &#x2022; Custom Controls&#10;" />
+								        <Span Text="    &#x2022; Custom Renderers&#10;" />
+								        <Span Text="    &#x2022; Cross Plugins&#10;" />
+								        <Span Text="    &#x2022; XFGloss&#10;" />
+								        <Span Text="&#x2022; HockeyApp Crash Reporting&#10;" />
+								        <Span Text="&#x2022; Xamarin Test Cloud&#10;" />
+								        <Span Text="    &#x2022; UITest&#10;" />
+								        <Span Text="    &#x2022; Extensions&#10;" />
+								        <Span Text="    &#x2022; Single code-base for iOS and Android&#10;" />
+								        <Span Text="&#x2022; Azure Mobile Services&#10;" />
+								        <Span Text="    &#x2022; C# backend&#10;" />
+								        <Span Text="    &#x2022; Offline Sync&#10;" />
+								        <Span Text="    &#x2022; WebAPI&#10;" />
+								        <Span Text="    &#x2022; Entity Framework&#10;" />
+								        <Span Text="    &#x2022; Cross-platform templated push notifications&#10;" />
+								    </FormattedString.Spans>
+								</FormattedString>
+							</Label.FormattedText>
+					    </Label>
+					</StackLayout>
+				</StackLayout>
+
+				<StackLayout Grid.Row="1" Padding="24,10,24,14" Spacing="14">
+					<local:SportButton Text="VIEW SOURCE" AutomationId="sourceButton" HorizontalOptions="FillAndExpand"
+						Style="{StaticResource wizardButton}" Clicked="HandleViewSourceClicked" />
+
+					<local:SportButton Text="ABOUT XAMARIN.FORMS" AutomationId="xamarinButton" HorizontalOptions="FillAndExpand"
+						Style="{StaticResource wizardButton}" Clicked="HandleXamarinClicked" />
+				</StackLayout>
+
+			</Grid>
+		</ScrollView>
+	</local:AboutPageXaml.Content>
+</local:AboutPageXaml>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<local:AuthenticationPageXaml xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:xfg="clr-namespace:XFGloss;assembly=XFGloss"
+	xmlns:local="clr-namespace:Sport.Mobile.Shared"
+	x:Class="Sport.Mobile.Shared.AuthenticationPage">
+
+	<xfg:ContentPageGloss.BackgroundGradient>
+        <xfg:Gradient Rotation="150">
+           <xfg:GradientStep StepColor="#9C27B0" StepPercentage="0" />
+           <xfg:GradientStep StepColor="#E91E63" StepPercentage="1" />
+      </xfg:Gradient>
+    </xfg:ContentPageGloss.BackgroundGradient>
+	
+    <local:AuthenticationPageXaml.Content>
+
+    	<Grid>
+    		<Grid.RowDefinitions>
+    			<RowDefinition Height="*" />
+    			<RowDefinition Height="*" />
+    		</Grid.RowDefinitions>
+
+			<ActivityIndicator x:Name="activity" AutomationId="activity" IsRunning="{Binding IsBusy}" Color="White"
+				VerticalOptions="End" Margin="0,0,0,20" />
+			<Label Grid.Row="1" AutomationId="status" TextColor="White" FontSize="Large"
+				Style="{StaticResource header}" Text="{Binding AuthenticationStatus, StringFormat='\{0\}...'}"
+				IsVisible="{Binding AuthenticationStatus, Converter={x:Static local:IsNotNullToBoolConverter.Instance}}"
+				XAlign="Center" YAlign="Center" VerticalOptions="Start" />
+    	</Grid>
+
+	</local:AuthenticationPageXaml.Content>
+</local:AuthenticationPageXaml>
