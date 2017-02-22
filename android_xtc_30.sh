@@ -1,1 +1,0 @@
-mono packages/Xamarin.UITest.2.0.0/tools/test-cloud.exe submit ~/Desktop/com.xamarin.sport_public.apk 748827ca77c923188f1b961893fe344a --devices d48099e7 --series "master" --locale "en_US" --app-name "Sport" --user rob.derosa@xamarin.com --assembly-dir Sport.Mobile.Tests/bin/Debug/

@@ -38,7 +38,7 @@ namespace Sport.Mobile.Shared
 		async public Task GetAvailableLeagues(bool forceRefresh = false)
 		{
 			Debug.WriteLine(IsBusy);
-			using(new Busy(this))
+			//using(new Busy(this))
 			{
 				Debug.WriteLine(IsBusy);
 				try
@@ -66,8 +66,9 @@ namespace Sport.Mobile.Shared
 						EmptyMessage = "There are no available leagues to join."
 					});
 				}
+
+				Debug.WriteLine(IsBusy);
 			}
-			Debug.WriteLine(IsBusy);
 		}
 	}
 }
