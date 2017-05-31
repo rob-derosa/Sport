@@ -44,12 +44,6 @@ namespace Sport.Mobile.Shared
 			private set;
 		}
 
-		public IAuthenticator Authenticator
-		{
-			get;
-			private set;
-		}
-
 		public Theming Theming
 		{
 			get;
@@ -154,7 +148,7 @@ namespace Sport.Mobile.Shared
 		/// </summary>
 		internal void StartRegistrationFlow()
 		{
-			MainPage = new WelcomeStartPage().WithinNavigationPage();
+			MainPage = new WelcomeStartPage(true).WithinNavigationPage();
 		}
 
 		void OnAppExceptionOccurred(object sender, Exception exception)

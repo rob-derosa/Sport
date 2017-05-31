@@ -98,6 +98,7 @@ namespace Sport.Mobile.Shared
 		{
 			var list = new List<Task<bool>>();
 
+			//TODO Refactor to bring down on the data necessary
 			list.Add(GameResultManager.SyncAsync());
 			list.Add(ChallengeManager.SyncAsync());
 			list.Add(MembershipManager.SyncAsync());
@@ -115,7 +116,7 @@ namespace Sport.Mobile.Shared
 		/// This app uses Azure as the backend which utilizes Notifications hubs
 		/// </summary>
 		/// <returns>The athlete notification hub registration.</returns>
-		public Task UpdateAthleteNotificationHubRegistration(Athlete athlete, bool forceSave = false, bool sendTestPush = false)
+		public Task UpdateAthleteNotificationHubRegistration(Athlete athlete, bool forceSave = false, bool sendTestPush = true)
 		{
 			return new Task(() =>
 			{
@@ -125,6 +126,7 @@ namespace Sport.Mobile.Shared
 				if(athlete.Id == null || athlete.DeviceToken == null)
 					return;
 
+				//Add all tags here
 				var tags = new List<string> {
 					athlete.Id,
 					"All",
@@ -139,6 +141,7 @@ namespace Sport.Mobile.Shared
 					Platform = athlete.DevicePlatform,
 					Tags = tags.ToArray()
 				};
+
 
 				var registrationId = Client.InvokeApiAsync<DeviceRegistration, string>("registerWithHub", reg, HttpMethod.Put, null).Result;
 				athlete.NotificationRegistrationId = registrationId;

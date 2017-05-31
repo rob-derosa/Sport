@@ -20,7 +20,11 @@ namespace Sport.Mobile.iOS
 			Xamarin.Calabash.Start();
 			//#endif
 
-            CurrentPlatform.Init();
+			Keys.GoogleClientId = Keys.GoogleClientIdiOS;
+			Keys.GoogleServerID = Keys.GoogleServerIdiOS;
+			SimpleAuth.Providers.Google.Init ();
+
+			CurrentPlatform.Init();
 			SQLitePCL.CurrentPlatform.Init();
 			Forms.Init();
 			ImageCircleRenderer.Init();
@@ -48,7 +52,12 @@ namespace Sport.Mobile.iOS
 
 			return base.FinishedLaunching(uiApplication, launchOptions);
 		}
-
+		public override bool OpenUrl (UIApplication app, NSUrl url, NSDictionary options)
+		{
+			if (SimpleAuth.Native.OpenUrl (app, url, options))
+				return true;
+			return base.OpenUrl (app, url, options);
+		}
 		public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
 		{
 			App.Instance.CurrentAthlete.DeviceToken = deviceToken.Description.Trim('<', '>').Replace(" ", "");

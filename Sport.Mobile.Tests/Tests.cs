@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using NUnit.Framework;
 using Xamarin.UITest;
@@ -25,7 +26,7 @@ namespace Sport.Mobile.Tests
 		}
 
 		[Test]
-		public void JoinLeagueAndChallenge()
+		public void JoinLeague()
 		{
 			Authenticate();
 			RegisterAthlete();
@@ -41,7 +42,9 @@ namespace Sport.Mobile.Tests
 
 			app.Screenshot("Then I should see a list of leagues to join");
 
-			Thread.Sleep(1000);
+			if(TestEnvironment.IsTestCloud)
+				Thread.Sleep(1000);
+
 			app.Tap("leagueRow");
 
 			app.ScrollDownTo("leaderboardButton", "leagueDetailsScrollView");
@@ -54,87 +57,103 @@ namespace Sport.Mobile.Tests
 			app.ScrollDownTo("Billiards");
 			app.Tap("Billiards");
 
-			app.WaitForElement("leaguePhoto");
 			app.Screenshot("Then I should see the league details");
-			app.ScrollDownTo("leaderboardButton", "leagueDetailsScrollView");
+			app.ScrollDownTo("leaderboardButton", "leagueDetailsScrollView", ScrollStrategy.Gesture, .67, 1000, true, TimeSpan.FromMinutes(1));
 			app.Tap("leaderboardButton");
 
 			app.WaitForElement("memberItemRoot");
 			app.Screenshot("Leaderboard listview");
 
-			app.ScrollDownTo("12");
-			app.Tap("12");
-			app.WaitForElement("memberDetailsRoot");
-			app.Screenshot("Member details page");
+			#region Challenge
+			//AppResult previous = null;
+			//int tries = 0;
 
-			app.ScrollDownTo("pastButton", "scrollView");
-			app.Tap("Bottom of member details page", e => e.Marked("pastButton"));
+			//while(previous == null && tries < 10)
+			//{
+			//	app.ScrollDownTo("*You*", null, ScrollStrategy.Gesture, .67, 300, true, TimeSpan.FromMinutes(1));
+			//	Thread.Sleep(1000);
+			//	var results = app.Query("aliasLabel");
+			//	//var previous = results.SingleOrDefault(e => e.Text == "*You*");
+			//	previous = results.TakeWhile(e => e.Text != "*You*").LastOrDefault();
+			//	tries++;
+			//}
 
-			app.WaitForElement("challengeItemRoot");
-			app.Screenshot("Challenge history page");
+			////Tap the row previous to the test user
+			//app.TapCoordinates(previous.Rect.CenterX, previous.Rect.CenterY);
 
-			if(TestEnvironment.IsTestCloud)
-				Thread.Sleep(10000); //Need to wait for list to load
+			//app.WaitForElement("memberDetailsRoot");
+			//app.Screenshot("Member details page");
 
-			if(app.Query("resultItemRoot").Length > 0)
-			{
-				app.Tap("resultItemRoot");
-				app.WaitForElement("challengeRoot");
-				app.Screenshot("Challenge result page");
+			//app.ScrollDownTo("pastButton");
+			//app.Tap("Bottom of member details page", e => e.Marked("pastButton"));
 
-				app.ScrollDownTo("winningLabel", "scrollView");
-				app.Screenshot("Challenge result page bottom");
-				app.Back(platform);
-				app.Tap("Done");
-			}
-			else
-			{
-				app.Tap("Done");
-			}
+			//app.WaitForElement("challengeItemRoot");
+			//app.Screenshot("Challenge history page");
 
-			app.Tap("challengeButton");
-			app.Screenshot("Challenge date page");
+			//if(TestEnvironment.IsTestCloud)
+			//	Thread.Sleep(10000); //Need to wait for list to load
 
-			app.Tap("datePicker");
-			app.Screenshot("Challenge date picker");
+			//if(app.Query("resultItemRoot").Length > 0)
+			//{
+			//	app.Tap("resultItemRoot");
+			//	app.WaitForElement("challengeRoot");
+			//	app.Screenshot("Challenge result page");
 
-			DismissPicker();
-			app.Screenshot("End");
+			//	app.ScrollDownTo("winningLabel");
+			//	app.Screenshot("Challenge result page bottom");
+			//	app.Back(platform);
+			//	app.Tap("Done");
+			//}
+			//else
+			//{
+			//	app.Tap("Done");
+			//}
 
-			app.Tap("timePicker");
-			app.Screenshot("Challenge time picker");
+			//app.Tap("challengeButton");
+			//app.Screenshot("Challenge date page");
 
-			DismissPicker();
-			app.Tap("Cancel");
+			//app.Tap("datePicker");
+			//app.Screenshot("Challenge date picker");
 
-			app.WaitForElement("Membership Info");
+			//DismissPicker();
+			//app.Screenshot("End");
+
+			//app.Tap("timePicker");
+			//app.Screenshot("Challenge time picker");
+
+			//DismissPicker();
+			//app.Tap("Cancel");
+
+			//app.WaitForElement("Membership Info");
+			//app.Back(platform);
+
+			//app.WaitForElement("Leaderboard");
+			//app.Back(platform);
+
+			//app.Tap("moreButton");
+			//app.Tap("Cowardly Abandon League");
+
+			//app.Screenshot("Confirm");
+			//app.Tap("No");
+			#endregion
+
 			app.Back(platform);
-
-			app.WaitForElement("Leaderboard");
 			app.Back(platform);
-
-			app.Tap("moreButton");
-			app.Tap("Cowardly Abandon League");
-
-			app.Screenshot("Confirm");
-			app.Tap("No");
-
-			app.Back(platform);
-			app.Screenshot("End");
+			//app.Screenshot("End");
 
 			app.Tap("moreButton");
 			app.Screenshot("More options menu");
 			app.Tap(e => e.Marked("About"), "About page");
 
 			app.WaitForElement("aboutPage");
-			app.ScrollDownTo("sourceButton", "scrollView");
+			app.ScrollDownTo("sourceButton");
 			app.Screenshot("Bottom of About page");
 
 			app.Tap("Done");
 
 			app.Tap("moreButton");
 			app.Tap(e => e.Marked("My Profile"), "Profile page");
-			app.ScrollDownTo("saveButton", "scrollView");
+			app.ScrollDownTo("saveButton");
 			app.Tap("Saving profile", e => e.Marked("saveButton"));
 
 			app.WaitForElement(e => e.Marked("leagueRow"));
@@ -155,7 +174,9 @@ namespace Sport.Mobile.Tests
 		void Authenticate()
 		{
 			app.WaitForElement("authButton");
-			app.Tap("When the app starts", "authButton");
+
+			app.Screenshot("When the app starts");
+			app.Tap("authButton");
 
 			var emailId = "#Email";
 			var passwordId = "#Passwd";
@@ -163,7 +184,8 @@ namespace Sport.Mobile.Tests
 			var nextButtonPasswordId = "#signIn";
 
 			//Give the Google auth form time to load
-			Thread.Sleep(15000);
+			if(TestEnvironment.IsTestCloud)
+				Thread.Sleep(60000);
 
 			var query = app.Query(e => e.Css("#identifierId"));
 
@@ -187,9 +209,9 @@ namespace Sport.Mobile.Tests
 			if(TestEnvironment.IsTestCloud)
 				Thread.Sleep(10000); //Need to wait for form fields to animate over
 
-			//app.Repl();
 			app.Tap(e => e.Css(passwordId));
-			app.EnterText(e => e.Css(passwordId), Keys.TestPassword, "And I enter my super secret password");
+			app.Screenshot("And I enter my super secret password");
+			app.EnterText(e => e.Css(passwordId), Keys.TestPassword);
 			app.DismissKeyboard();
 			app.Tap(e => e.Css(nextButtonPasswordId));
 		}
@@ -200,12 +222,33 @@ namespace Sport.Mobile.Tests
 			app.ClearText(e => e.Marked("aliasText"));
 			app.EnterText(e => e.Marked("aliasText"), Keys.TestAlias, "And I enter my alias");
 			app.DismissKeyboard();
-			Thread.Sleep(3000);
+
+			if(TestEnvironment.IsTestCloud)
+				Thread.Sleep(3000);
 
 			app.Tap("And I save my profile", e => e.Marked("saveButton"));
 			app.WaitForElement("continueButton", "Timed out waiting for the Continue button", TimeSpan.FromMinutes(5));
-			Thread.Sleep(3000);
+
+			if(TestEnvironment.IsTestCloud)
+				Thread.Sleep(3000);
+
+			ToggleSwitch("pushToggle", true);
+			app.Screenshot("And I enable push notifications");
+			ToggleSwitch("pushToggle", false);
+			
 			app.Tap("Continue button", e => e.Marked("continueButton"));
+		}
+
+		void ToggleSwitch(string marked, bool isToggled)
+		{
+			if(platform == Platform.iOS)
+			{
+				app.Query(e => e.Marked(marked).Invoke("setOn", Convert.ToInt32(isToggled), "animated", 1));
+			}
+			else if (platform == Platform.Android)
+			{
+				app.Query(e => e.Marked(marked).Invoke("setChecked", isToggled));
+			}
 		}
 	}
 }

@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Collections.Generic;
+using SimpleAuth;
+using SimpleAuth.Providers;
 
 namespace Sport.Mobile.Shared
 {
@@ -17,7 +19,6 @@ namespace Sport.Mobile.Shared
 	{
 		#region Properties
 
-		IAuthenticator _authenticator = DependencyService.Get<IAuthenticator>();
 		string _authenticationStatus;
 
 		public string AuthenticationStatus
@@ -92,7 +93,7 @@ namespace Sport.Mobile.Shared
 				try
 				{
 					AuthenticationStatus = "Loading...";
-					MobileServiceUser user = await _authenticator.Authenticate();
+                    MobileServiceUser user = await AuthenticateWithGoogle();
 
 					if(user != null)
 					{
@@ -110,6 +111,60 @@ namespace Sport.Mobile.Shared
 				}
 			}
 		}
+
+		public async Task<MobileServiceUser> AuthenticateWithGoogle()
+		{
+			Account account = null;
+			GoogleApi api = null;
+
+			try
+			{
+				var scopes = new[]
+				{
+					"https://www.googleapis.com/auth/userinfo.email",
+					"https://www.googleapis.com/auth/userinfo.profile",
+				};
+
+				api = new GoogleApi("google", Keys.GoogleClientId)
+				{
+					ServerClientId = Keys.GoogleServerID,
+					Scopes = scopes,
+				};
+
+				account = await api.Authenticate();
+				var oauth = account as OAuthAccount;
+				var token = account.UserData["ServerToken"];
+
+				if (account != null)
+				{
+					var jObject = JObject.Parse($"{{'id_token':'{oauth.IdToken}', 'authorization_code':'{token}'}}");
+					var usr = await AzureService.Instance.Client.LoginAsync(MobileServiceAuthenticationProvider.Google, jObject);
+					return usr;
+				}
+			}
+			catch(MobileServiceInvalidOperationException e)
+			{
+				if (e.Response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+				{
+					if (api != null)
+					{
+						api.ResetData();
+						return await AuthenticateWithGoogle();
+					}
+				}
+
+				Debug.WriteLine(e);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine(ex);
+			}
+
+			return null;
+		}
+
+
+
 
 		AppServiceIdentity _identity;
 		async Task SetIdentityValues(MobileServiceUser user)
@@ -135,8 +190,8 @@ namespace Sport.Mobile.Shared
 				switch(Keys.AuthenticationProvider)
 				{
 					case MobileServiceAuthenticationProvider.Google:
-						Settings.AccessToken = _identity.AccessToken;
 						Settings.RefreshToken = _identity.RefreshToken;
+                        Settings.AccessToken = _identity.AccessToken;
 						break;
 						
 					case MobileServiceAuthenticationProvider.WindowsAzureActiveDirectory:
@@ -162,10 +217,9 @@ namespace Sport.Mobile.Shared
 			}
 			else
 			{
-				athlete.ProfileImageUrl = AuthUserProfile.PhotoUrl;
-
-				if(athlete.IsDirty)
+				if(AuthUserProfile.PhotoUrl != athlete.ProfileImageUrl)
 				{
+					athlete.ProfileImageUrl = AuthUserProfile.PhotoUrl;
 					await AzureService.Instance.AthleteManager.UpsertAsync(athlete);
 				}
 			}
@@ -300,8 +354,13 @@ namespace Sport.Mobile.Shared
 
 			if(clearCookies)
 			{
+				var api = new GoogleApi("google", Keys.GoogleClientId)
+				{
+					ServerClientId = Keys.GoogleServerID,
+				};
+
+                api.ResetData();
 				Settings.RegistrationComplete = false;
-				_authenticator.ClearCookies();
 			}
 		}
 
@@ -318,7 +377,7 @@ namespace Sport.Mobile.Shared
 
 						using(var client = new HttpClient())
 						{
-							const string url = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json";
+                            const string url = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json";
 							client.DefaultRequestHeaders.Add("Authorization", Settings.AccessTokenAndType);
 							var json = await client.GetStringAsync(url);
 							var profile = JsonConvert.DeserializeObject<GoogleUserProfile>(json);
@@ -340,16 +399,6 @@ namespace Sport.Mobile.Shared
 					ad.Id = _identity.UserClaims.SingleOrDefault(c => c.Typ == "http://schemas.microsoft.com/identity/claims/objectidentifier")?.Val;
 					ad.Email = _identity.UserClaims.SingleOrDefault(c => c.Typ == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Val;
 					ad.Name = _identity.UserClaims.SingleOrDefault(c => c.Typ == "name")?.Val;
-
-					//using(var client = new HttpClient())
-					//{
-					//	client.DefaultRequestHeaders.Add("ZUMO-API-VERSION", "2.0.0");
-					//	client.DefaultRequestHeaders.Add("Authorization", "Bearer " + AzureService.Instance.Client.CurrentUser.MobileServiceAuthenticationToken);
-					//	client.DefaultRequestHeaders.Add("X-ZUMO-AUTH", AzureService.Instance.Client.CurrentUser.MobileServiceAuthenticationToken);
-					//	var json = client.GetStringAsync("https://graph.microsoft.com/v1.0/me/").Result;
-					//	Debug.WriteLine(json);
-					//	//identity = JsonConvert.DeserializeObject<JToken>(json);
-					//}
 
 					return ad;
 

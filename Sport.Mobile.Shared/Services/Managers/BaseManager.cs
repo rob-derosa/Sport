@@ -61,11 +61,10 @@ namespace Sport.Mobile.Shared
 
 		public virtual async Task<bool> InsertAsync(T item)
 		{
-			var pull = await PullLatestAsync().ConfigureAwait(false);
 			await Table.InsertAsync(item).ConfigureAwait(false);
-			var push = await SyncAsync().ConfigureAwait(false);
+			var success = await SyncAsync().ConfigureAwait(false);
 
-			if(push)
+			if(success)
 			{
 				var updated = await GetItemAsync(item.Id, false).ConfigureAwait(false);
 				item.Version = updated.Version;
@@ -73,22 +72,21 @@ namespace Sport.Mobile.Shared
 
 			}
 
-			return pull && push;
+			return success;
 		}
 
 		public virtual async Task<bool> UpdateAsync(T item)
 		{
 			try
 			{
-				var pull = await PullLatestAsync().ConfigureAwait(false);
 				await Table.UpdateAsync(item).ConfigureAwait(false);
-				var push = await SyncAsync().ConfigureAwait(false);
+				var success = await SyncAsync().ConfigureAwait(false);
 				var updated = await GetItemAsync(item.Id, false).ConfigureAwait(false);
 
 				item.Version = updated.Version;
 				item.UpdatedAt = updated.UpdatedAt;
 
-				return pull && push;
+				return success;
 			}
 			catch(Exception e)
 			{
@@ -99,10 +97,9 @@ namespace Sport.Mobile.Shared
 
 		public virtual async Task<bool> RemoveAsync(T item)
 		{
-			var pull = await PullLatestAsync().ConfigureAwait(false);
 			await Table.DeleteAsync(item).ConfigureAwait(false);
-			var push = await SyncAsync().ConfigureAwait(false);
-			return pull && push;
+			var success = await SyncAsync().ConfigureAwait(false);
+			return success;
 		}
 
 		public async Task<bool> PullLatestAsync()
@@ -114,7 +111,7 @@ namespace Sport.Mobile.Shared
 			}
 			try
 			{
-				//Debug.WriteLine($"Pulling for table {Identifier}");
+				//Pull down any content from the server that doesn't exist locally and add it to the local database
 				await Table.PullAsync($"all{Identifier}", Table.CreateQuery()).ConfigureAwait(false);
 			}
 			catch(Exception ex)
