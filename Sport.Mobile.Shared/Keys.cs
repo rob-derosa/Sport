@@ -7,8 +7,8 @@ namespace Sport.Mobile.Shared
 		public static readonly MobileServiceAuthenticationProvider AuthenticationProvider = MobileServiceAuthenticationProvider.Google;
 		public static string GoogleClientId;
 		public static string GoogleServerID;
-		public static readonly string MobileCenterKeyiOS = string.Empty;
-        public static readonly string MobileCenterKeyAndroid = string.Empty;
+		public static readonly string MobileCenterKeyiOS = "98ff82f0-6280-48c1-b46a-c1a112d16760";
+        public static readonly string MobileCenterKeyAndroid = "0b2ff72a-2b90-4f4e-89fe-8ae8d684852e";
 
         public static readonly string SourceCodeUrl = "https://github.com/xamarin/sport";
 		public static readonly string GooglePushNotificationSenderId = "643221174110";
